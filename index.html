@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RenalRisk Pro — Clinician Evaluation Survey</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#F5F5F3;color:#1a1a1a;min-height:100vh;padding:2rem 1rem}
+  .container{max-width:680px;margin:0 auto;background:#fff;border-radius:16px;padding:2rem;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+
+  .prog-wrap{margin-bottom:1.5rem}
+  .prog-bar{height:4px;background:#E8E8E4;border-radius:2px;overflow:hidden}
+  .prog-fill{height:100%;background:#1D9E75;border-radius:2px;transition:width .35s ease}
+  .prog-label{font-size:12px;color:#888;margin-top:6px}
+
+  .steps-row{display:flex;gap:0;margin-bottom:2rem;position:relative;overflow-x:auto;padding-bottom:4px}
+  .steps-row::before{content:'';position:absolute;top:13px;left:20px;right:20px;height:1px;background:#E0E0DA;z-index:0}
+  .step-dot{display:flex;flex-direction:column;align-items:center;flex:1;min-width:60px;position:relative;z-index:1}
+  .dot{width:28px;height:28px;border-radius:50%;border:1.5px solid #D0D0CA;background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#aaa;margin-bottom:5px;transition:all .2s}
+  .dot.done{background:#1D9E75;border-color:#1D9E75;color:#fff}
+  .dot.active{background:#EBF7FF;border-color:#378ADD;color:#185FA5}
+  .step-dot .lbl{font-size:10px;color:#aaa;text-align:center;line-height:1.3}
+  .step-dot.active-lbl .lbl{color:#185FA5;font-weight:600}
+
+  .step{display:none}
+  .step.active{display:block}
+
+  h1{font-size:20px;font-weight:600;color:#111;margin-bottom:6px}
+  .page-sub{font-size:13px;color:#666;line-height:1.7;margin-bottom:1.25rem}
+
+  .card{background:#F8F8F5;border:1px solid #EAEAE4;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:.85rem}
+  .card-title{font-size:13px;font-weight:600;color:#333;margin-bottom:5px}
+  .card-body{font-size:13px;color:#555;line-height:1.7}
+  .card-body ul{padding-left:18px;list-style:disc;line-height:2.2}
+
+  .case-box{background:#F0F9F5;border:1px solid #9FE1CB;border-radius:12px;padding:1.1rem 1.25rem;margin-bottom:1rem}
+  .case-box h4{font-size:11px;font-weight:700;color:#0F6E56;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+  .case-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(29,158,117,.12)}
+  .case-row:last-child{border-bottom:none}
+  .case-key{font-size:12px;color:#555}
+  .case-val{font-size:13px;font-weight:600;color:#111}
+  .risk-pill{display:inline-flex;align-items:center;gap:5px;background:#FCEBEB;border:1px solid #F7C1C1;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:600;color:#791F1F}
+
+  .steps-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin:1rem 0}
+  .steps-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:#333;line-height:1.6}
+  .num{width:24px;height:24px;border-radius:50%;background:#EBF7FF;color:#185FA5;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+  .proto-link-wrap{text-align:center;padding:1.5rem;background:#F5F5F3;border:1px dashed #CCC;border-radius:12px;margin:1rem 0}
+  .proto-link{display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:10px;background:#185FA5;color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:opacity .15s}
+  .proto-link:hover{opacity:.88}
+  .proto-hint{font-size:12px;color:#888;margin-top:8px}
+
+  .confirm-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:#F8F8F5;border:1px solid #DDDDD8;border-radius:10px;margin-top:1rem;cursor:pointer;user-select:none}
+  .confirm-row input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#1D9E75}
+  .confirm-row span{font-size:13px;color:#333}
+
+  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.25rem}
+  @media(max-width:500px){.meta-grid{grid-template-columns:1fr}}
+  .field label{font-size:12px;color:#666;display:block;margin-bottom:5px;font-weight:500}
+  .req{color:#D85A30}
+  .field select,.field input,.field textarea{width:100%;padding:9px 12px;border:1px solid #DDDDD8;border-radius:8px;background:#fff;color:#111;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s}
+  .field select:focus,.field input:focus,.field textarea:focus{border-color:#378ADD}
+  .field textarea{min-height:80px;resize:vertical;line-height:1.6}
+
+  .section-hd{display:flex;align-items:center;gap:8px;margin-bottom:.7rem;padding-bottom:8px;border-bottom:1px solid #EAEAE4}
+  .badge{font-size:11px;font-weight:600;padding:3px 11px;border-radius:20px;white-space:nowrap}
+  .bg1{background:#EEEDFE;color:#3C3489}
+  .bg2{background:#E1F5EE;color:#085041}
+  .bg3{background:#E6F1FB;color:#0C447C}
+  .bg4{background:#FAEEDA;color:#633806}
+  .bg5{background:#FAECE7;color:#712B13}
+  .bgx{background:#F1EFE8;color:#444441}
+  .sec-title{font-size:14px;font-weight:600;color:#111}
+  .sec-desc{font-size:12px;color:#666;line-height:1.7;padding:9px 13px;border-left:3px solid #DDDDD8;background:#F8F8F5;border-radius:0 8px 8px 0;margin-bottom:1rem}
+
+  .q{margin-bottom:1.2rem}
+  .q-label{font-size:13px;color:#222;margin-bottom:8px;line-height:1.6;font-weight:500}
+  .q-sub{font-size:12px;color:#888;font-weight:400}
+
+  .likert{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-top:4px}
+  .lo{text-align:center;cursor:pointer}
+  .lo input{display:none}
+  .lo span{display:block;padding:9px 4px;border:1px solid #DDDDD8;border-radius:8px;font-size:11px;color:#888;background:#fff;cursor:pointer;transition:all .12s;line-height:1.4}
+  .lo input:checked+span{background:#EBF7FF;border-color:#378ADD;color:#185FA5;font-weight:600}
+  .lo span:hover{background:#F5F5F3;border-color:#BBBBB5}
+  .scale-lbl{display:flex;justify-content:space-between;margin-top:4px}
+  .scale-lbl span{font-size:10px;color:#aaa}
+
+  .mcq{display:flex;flex-direction:column;gap:7px}
+  .mo{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border:1px solid #DDDDD8;border-radius:8px;cursor:pointer;font-size:13px;color:#333;background:#fff;line-height:1.5;transition:background .1s}
+  .mo:hover{background:#F5F5F3}
+  .mo input{margin-top:2px;flex-shrink:0;accent-color:#185FA5}
+
+  .divider{height:1px;background:#EAEAE4;margin:1.25rem 0}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;padding-top:1.25rem;border-top:1px solid #EAEAE4}
+  .btn{padding:10px 22px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;border:1px solid #DDDDD8;background:#fff;color:#333;font-family:inherit;transition:background .12s}
+  .btn:hover{background:#F5F5F3}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-p{background:#185FA5;border-color:#185FA5;color:#fff}
+  .btn-p:hover{background:#0C447C;border-color:#0C447C}
+  .page-label{font-size:12px;color:#aaa}
+
+  .thankyou{text-align:center;padding:2rem 1rem}
+  .thankyou .icon{font-size:48px;margin-bottom:1rem}
+  .thankyou h2{font-size:22px;font-weight:700;color:#1D9E75;margin-bottom:.75rem}
+  .thankyou p{font-size:14px;color:#555;line-height:1.8;max-width:440px;margin:0 auto}
+
+  @media(max-width:500px){
+    .container{padding:1.25rem}
+    h1{font-size:17px}
+    .likert{gap:3px}
+    .lo span{padding:7px 2px;font-size:10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <form id="ckd-xai-survey" onsubmit="return false;">
+
+  <div class="prog-wrap">
+    <div class="prog-bar"><div class="prog-fill" id="prog" style="width:14%"></div></div>
+    <div class="prog-label" id="prog-label">Step 1 of 7</div>
+  </div>
+
+  <div class="steps-row">
+    <div class="step-dot active-lbl" id="sd0"><div class="dot active" id="d0">1</div><span class="lbl">Intro</span></div>
+    <div class="step-dot" id="sd1"><div class="dot" id="d1">2</div><span class="lbl">Profile</span></div>
+    <div class="step-dot" id="sd2"><div class="dot" id="d2">3</div><span class="lbl">Try System</span></div>
+    <div class="step-dot" id="sd3"><div class="dot" id="d3">4</div><span class="lbl">G1-G2</span></div>
+    <div class="step-dot" id="sd4"><div class="dot" id="d4">5</div><span class="lbl">G3-G5</span></div>
+    <div class="step-dot" id="sd5"><div class="dot" id="d5">6</div><span class="lbl">Overall</span></div>
+    <div class="step-dot" id="sd6"><div class="dot" id="d6">7</div><span class="lbl">Stay in touch</span></div>
+  </div>
+
+  <!-- ═══ STEP 0: Introduction ═══ -->
+  <div class="step active" id="s0">
+    <h1>RenalRisk Pro — Clinician Evaluation</h1>
+    <p class="page-sub">Thank you for participating in this study. Your responses will directly inform the development of an AI-powered clinical decision support system for early Chronic Kidney Disease (CKD) risk prediction using Explainable AI (XAI).</p>
+
+    <div class="card">
+      <div class="card-title">Study Objective</div>
+      <div class="card-body">We aim to evaluate the clinical suitability of the system's outputs and explanations through your hands-on experience with the prototype, and to assess the clarity, relevance, and trustworthiness of its XAI features.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">How this survey works</div>
+      <div class="card-body">
+        <ul>
+          <li>You will enter a specific clinical case into the live prototype</li>
+          <li>Review the risk score and the explanations carefully</li>
+          <li>Answer targeted questions based on what you observed</li>
+          <li>Estimated time: 10–15 minutes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Confidentiality</div>
+      <div class="card-body">Participation is voluntary and fully anonymous. Data will be used solely for academic research purposes as part of a Master's thesis at King Abdulaziz University, Jeddah, Saudi Arabia.</div>
+    </div>
+
+    <div class="nav">
+      <span></span>
+      <span class="page-label">1 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(1)">Start →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 1: Demographics ═══ -->
+  <div class="step" id="s1">
+    <h1>Your Professional Profile</h1>
+    <p class="page-sub">This information helps us analyse results by specialty and experience level. All responses are anonymous.</p>
+
+    <div class="meta-grid">
+      <div class="field">
+        <label>Specialty <span class="req">*</span></label>
+        <select id="f_spec" name="specialty">
+          <option value="">Select...</option>
+          <option>Nephrology</option>
+          <option>Urology</option>
+          <option>Internal Medicine</option>
+          <option>Family Medicine / General Practice</option>
+          <option>Endocrinology / Diabetology</option>
+          <option>Cardiology</option>
+          <option>Critical Care / Intensive Care</option>
+          <option>Geriatrics</option>
+          <option>Clinical Pharmacology</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Years of Experience <span class="req">*</span></label>
+        <select id="f_exp"  name="experience">
+          <option value="">Select...</option>
+          <option>Less than 5 years</option>
+          <option>5 – 10 years</option>
+          <option>More than 10 years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Familiarity with AI tools</label>
+        <select id="f_ai"   name="ai_familiarity">
+          <option value="">Select...</option>
+          <option>No experience</option>
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Expert</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Institution (optional)</label>
+        <input type="text" id="f_hosp" name="institution" placeholder="e.g. King Abdulaziz University Hospital">
+      </div>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(0)">← Back</button>
+      <span class="page-label">2 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3: Prototype ═══ -->
+  <div class="step" id="s2">
+    <h1>Try the Prototype</h1>
+    <p class="page-sub">Before answering any questions, please interact with the live system by entering the clinical case below.</p>
+
+    <div class="case-box">
+      <h4>Clinical Case — Enter these values into the system</h4>
+      <div class="case-row"><span class="case-key">Age / Sex</span><span class="case-val">58 years, Male</span></div>
+      <div class="case-row"><span class="case-key">eGFR</span><span class="case-val">24 mL/min/1.73m²</span></div>
+      <div class="case-row"><span class="case-key">Urine ACR</span><span class="case-val">480 mg/g</span></div>
+      <div class="case-row"><span class="case-key">Diabetes</span><span class="case-val">Yes (12 years duration)</span></div>
+      <div class="case-row"><span class="case-key">Blood Pressure</span><span class="case-val">162/98 mmHg</span></div>
+      <div class="case-row"><span class="case-key">Haemoglobin</span><span class="case-val">9.8 g/dL</span></div>
+      <div class="case-row"><span class="case-key">Expected output</span><span class="case-val"><span class="risk-pill">⚠ Very High Risk</span></span></div>
+    </div>
+
+    <ul class="steps-list">
+      <li><div class="num">1</div><span>Open the prototype using the link below (opens in a new tab)</span></li>
+      <li><div class="num">2</div><span>Click <strong>New Assessment</strong> and enter the case values above</span></li>
+      <li><div class="num">3</div><span>Carefully review the risk score and the explanations showing which factors drove the decision</span></li>
+      <li><div class="num">4</div><span>Return to this page and confirm you have completed the task</span></li>
+    </ul>
+
+    <div class="proto-link-wrap">
+      <a class="proto-link" href="https://renal-risk-pro.base44.app/NewAssessment" target="_blank" rel="noopener">
+        🔗 &nbsp;Open RenalRisk Pro
+      </a>
+      <div class="proto-hint">Opens in a new tab — return here when done</div>
+    </div>
+
+    <label class="confirm-row">
+      <input type="checkbox" id="proto-done" onchange="document.getElementById('btn-next2').disabled=!this.checked">
+      <span>✓ &nbsp;I have tried the system and reviewed the risk score and explanation</span>
+    </label>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(1)">← Back</button>
+      <span class="page-label">3 / 7</span>
+      <button type="button" class="btn btn-p" id="btn-next2" onclick="goTo(3)" disabled>Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4: G1 ═══ -->
+  <div class="step" id="s3">
+    <h1>Understandability</h1>
+
+    <div class="section-hd">
+      <span class="badge bg1">G1 — Understandability</span>
+      <span class="sec-title">Clarity of System Outputs</span>
+    </div>
+    <p class="sec-desc">This section evaluates how easily you could understand the system's outputs without requiring a technical background in AI or machine learning.</p>
+
+    <div class="q">
+      <p class="q-label">1. How easy was it to understand the risk score produced by the system? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="1"><span>Very difficult (1)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="5"><span>Very easy (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Very difficult</span><span>Very easy</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">2. How clear were the explainability explanations showing which clinical factors influenced the decision? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="1"><span>Not clear (1)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="5"><span>Very clear (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Not clear</span><span>Very clear</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">3. Would you need specialised training to use this system in practice?</p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g1_training_needed" value="No - outputs are self-explanatory for any clinician"><span>No — outputs are self-explanatory for any clinician</span></label>
+        <label class="mo"><input type="radio" name="g1_training_needed" value="Minimal orientation"><span>Minimal orientation (under one hour) would suffice</span></label>
+        <label class="mo"><input type="radio" name="g1_training_needed" value="Structured training required"><span>Structured training would be required</span></label>
+        <label class="mo"><input type="radio" name="g1_training_needed" value="Difficult without technical knowledge"><span>Outputs are difficult to interpret without technical knowledge</span></label>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(2)">← Back</button>
+      <span class="page-label">4 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 5: G2 ═══ -->
+  <div class="step" id="s4">
+    <h1>Clinical Relevance</h1>
+
+    <div class="section-hd">
+      <span class="badge bg2">G2 — Clinical Relevance</span>
+      <span class="sec-title">Alignment with Clinical Reasoning</span>
+    </div>
+    <p class="sec-desc">This section assesses whether the system's explanations align with your clinical reasoning process when evaluating CKD cases.</p>
+
+    <div class="q">
+      <p class="q-label">4. The factors highlighted by the system (eGFR, ACR, diabetes...) — how well do they align with what you consider clinically when assessing CKD risk? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="1"><span>Not at all (1)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="5"><span>Completely (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Not at all aligned</span><span>Completely aligned</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">5. Could you directly incorporate the system's explanation into your clinical decision for this case? <span class="req">*</span></p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Yes - directly supports decision"><span>Yes — it directly supports my decision</span></label>
+        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Yes - additional information needed"><span>Yes — but I would need additional information first</span></label>
+        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Partially useful"><span>Partially — only some aspects are useful</span></label>
+        <label class="mo"><input type="radio" name="g2_clinical_integration" value="No direct clinical value"><span>No — I see no direct clinical value in the explanation</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">6. What is the most important information missing from the explanation? <span class="q-sub">(Select all that apply)</span></p>
+      <div class="mcq">
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Rate of eGFR decline over time"><span>Rate of eGFR decline over time (slope)</span></label>
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Current medications and nephrotoxic effects"><span>Current medications and their nephrotoxic effects</span></label>
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Comparison with similar patient profiles"><span>Comparison with similar patient profiles</span></label>
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Suggested treatment or management recommendation"><span>Suggested treatment or management recommendation</span></label>
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Biopsy or imaging findings"><span>Biopsy or imaging findings</span></label>
+        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Nothing - information sufficient"><span>Nothing — the information provided is sufficient</span></label>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(3)">← Back</button>
+      <span class="page-label">5 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 6: G3-G5 ═══ -->
+  <div class="step" id="s5">
+    <h1>Truthfulness, Utility & Efficiency</h1>
+
+    <div class="section-hd">
+      <span class="badge bg3">G3 — Truthfulness</span>
+      <span class="sec-title">Credibility of the Explanation</span>
+    </div>
+    <p class="sec-desc">Does the explanation genuinely reflect the model's reasoning, or does it seem inconsistent with the clinical picture?</p>
+
+    <div class="q">
+      <p class="q-label">7. After reviewing the explanation, how much do you trust that the model based its decision on clinically sound factors? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="1"><span>No trust (1)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="5"><span>Full trust (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>No trust</span><span>Full trust</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">8. Did you notice any contradiction between the system's explanation and your own clinical assessment of this case?</p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g3_contradiction" value="No contradiction"><span>No contradiction — the explanation is fully consistent</span></label>
+        <label class="mo"><input type="radio" name="g3_contradiction" value="Minor inconsistency"><span>Minor inconsistency — does not affect my confidence</span></label>
+        <label class="mo"><input type="radio" name="g3_contradiction" value="Noticeable inconsistency"><span>Noticeable inconsistency — I would hesitate to use it</span></label>
+        <label class="mo"><input type="radio" name="g3_contradiction" value="Major contradiction"><span>Major contradiction — significantly reduces my trust</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-hd">
+      <span class="badge bg4">G4 — Informative Plausibility</span>
+      <span class="sec-title">Detecting Decision Errors</span>
+    </div>
+    <p class="sec-desc">Can you use the explanation to identify when the model might be wrong or biased?</p>
+
+    <div class="q">
+      <p class="q-label">9. Does the explanation help you identify cases where the model's decision might be incorrect? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g4_error_detection" value="1"><span>Not at all (1)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="5"><span>Very much (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Not at all</span><span>Very much</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">10. Based on what you saw, what clinical action would you take for this patient? <span class="req">*</span></p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g4_clinical_action" value="Immediate referral to nephrologist"><span>Immediate referral to a nephrologist</span></label>
+        <label class="mo"><input type="radio" name="g4_clinical_action" value="Referral with confirmatory tests"><span>Referral with additional confirmatory tests</span></label>
+        <label class="mo"><input type="radio" name="g4_clinical_action" value="Manual review first"><span>Manual review first, then decide</span></label>
+        <label class="mo"><input type="radio" name="g4_clinical_action" value="Would not act based on system output"><span>I would not act based on this system's output</span></label>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-hd">
+      <span class="badge bg5">G5 — Computational Efficiency</span>
+      <span class="sec-title">Speed & Workflow Fit</span>
+    </div>
+    <p class="sec-desc">Is the system fast enough to fit into a busy clinical workflow?</p>
+
+    <div class="q">
+      <p class="q-label">11. How long did it take you to enter the data and review the output?</p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g5_time_taken" value="Under 2 minutes"><span>Under 2 minutes</span></label>
+        <label class="mo"><input type="radio" name="g5_time_taken" value="2-5 minutes"><span>2 – 5 minutes</span></label>
+        <label class="mo"><input type="radio" name="g5_time_taken" value="5-10 minutes"><span>5 – 10 minutes</span></label>
+        <label class="mo"><input type="radio" name="g5_time_taken" value="More than 10 minutes"><span>More than 10 minutes</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">12. Is that time acceptable within your daily clinical routine? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="1"><span>Not acceptable (1)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="5"><span>Fully acceptable (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Not acceptable</span><span>Fully acceptable</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">13. Did you encounter any technical issues while using the prototype?</p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="g5_technical_issues" value="No issues"><span>No — everything worked smoothly</span></label>
+        <label class="mo"><input type="radio" name="g5_technical_issues" value="Minor issue"><span>Minor issue — easily resolved</span></label>
+        <label class="mo"><input type="radio" name="g5_technical_issues" value="Notable issue"><span>Notable issue — affected my experience</span></label>
+        <label class="mo"><input type="radio" name="g5_technical_issues" value="Could not complete"><span>Technical problem — could not complete the task</span></label>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(4)">← Back</button>
+      <span class="page-label">6 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(6)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 7: Overall ═══ -->
+  <div class="step" id="s6">
+    <h1>Overall Assessment</h1>
+
+    <div class="section-hd">
+      <span class="badge bgx">Overall</span>
+      <span class="sec-title">Your Overall Impression</span>
+    </div>
+
+    <div class="q">
+      <p class="q-label">14. What is your overall level of trust in this system for real-world clinical use? <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="overall_trust" value="1"><span>No trust (1)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="5"><span>High trust (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>No trust</span><span>High trust</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">15. Would you recommend deploying this system in clinical settings? <span class="req">*</span></p>
+      <div class="mcq">
+        <label class="mo"><input type="radio" name="overall_recommend" value="Yes - ready as is"><span>Yes — ready for deployment as is</span></label>
+        <label class="mo"><input type="radio" name="overall_recommend" value="Yes - with improvements"><span>Yes — with improvements to the explanation interface</span></label>
+        <label class="mo"><input type="radio" name="overall_recommend" value="Requires further validation"><span>Requires further validation before deployment</span></label>
+        <label class="mo"><input type="radio" name="overall_recommend" value="No - not ready"><span>No — not ready for clinical deployment</span></label>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="field">
+        <label>16. What is the single most important improvement you would suggest for this system?</label>
+        <textarea id="f_improve"  name="q16_improvement" placeholder="Write your suggestion here..."></textarea>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="field">
+        <label>17. Are there any additional clinical variables you would recommend including in the prediction model?</label>
+        <textarea id="f_features" name="q17_variables" placeholder="Write your suggestion here..."></textarea>
+      </div>
+    </div>
+
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(5)">← Back</button>
+      <span class="page-label">7 / 7</span>
+      <button type="button" class="btn btn-p" onclick="goTo(7)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 7: Stay in touch (optional) ═══ -->
+  <div class="step" id="s7">
+    <h1>Stay in the Loop <span style="font-size:14px;font-weight:400;color:#888;">(Optional)</span></h1>
+    <p class="page-sub">All survey responses are fully anonymous. However, if you would like to receive a summary of the study findings once published, or if you are open to a brief follow-up interview, you are welcome to share your contact details below. This is entirely optional and will not affect your responses in any way.</p>
+
+    <div class="card" style="border-color:#9FE1CB;background:#F0F9F5;">
+      <div class="card-title" style="color:#0F6E56;">Your privacy is protected</div>
+      <div class="card-body">Contact details are stored separately from your survey answers and will never be linked to your responses. They will be used solely to share research findings or schedule an optional follow-up.</div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:1rem;">
+      <div class="field">
+        <label>Full name <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <input type="text" id="c_name"  name="contact_name">
+      </div>
+      <div class="field">
+        <label>Email address <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <input type="email" id="c_email" name="contact_email">
+      </div>
+      <div class="field">
+        <label>Phone / WhatsApp number <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <input type="tel" id="c_phone" name="contact_phone">
+      </div>
+      <div class="field">
+        <label>What would you like to receive? <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <div class="mcq" style="margin-top:4px;">
+          <label class="mo"><input type="checkbox" name="contact_preference" value="Summary of study findings"><span>A summary of the study findings when published</span></label>
+          <label class="mo"><input type="checkbox" name="contact_preference" value="Follow-up interview"><span>An invitation to a brief follow-up interview (15–20 min)</span></label>
+          <label class="mo"><input type="checkbox" name="contact_preference" value="Final thesis or research paper"><span>A copy of the final thesis / research paper</span></label>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:#aaa;margin-top:1rem;line-height:1.6;">You may skip this step entirely — no contact information is required to complete the survey.</p>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(6)">← Back</button>
+      <span class="page-label">7 / 7</span>
+      <button type="button" class="btn btn-p" onclick="submitForm()">Submit Survey ✓</button>
+    </div>
+  </div>
+
+  <!-- ═══ Thank You ═══ -->
+  <div class="step" id="s8">
+    <div class="thankyou">
+      <div class="icon">🎉</div>
+      <h2>Thank you!</h2>
+      <p>Your responses have been recorded. Your contribution directly supports the development of a system designed to improve early CKD detection and patient outcomes.<br><br>If you have any questions about this study, please contact the researcher:<br><strong>Kowais@stu.kau.edu.sa</strong></p>
+    </div>
+  </div>
+
+  </form>
+</div>
+
+<script>
+var cur = 0;
+var progs = [13, 26, 40, 53, 67, 80, 93, 100, 100];
+
+function goTo(n) {
+  document.getElementById('s' + cur).classList.remove('active');
+  document.getElementById('s' + n).classList.add('active');
+  for (var i = 0; i < 7; i++) {
+    var d = document.getElementById('d' + i);
+    var sd = document.getElementById('sd' + i);
+    d.classList.remove('done', 'active');
+    sd.classList.remove('active-lbl');
+    if (n >= 7 || i < n) { d.classList.add('done'); d.textContent = '✓'; }
+    else if (i === n) { d.classList.add('active'); d.textContent = (i + 1); sd.classList.add('active-lbl'); }
+    else { d.textContent = (i + 1); }
+  }
+  document.getElementById('prog').style.width = progs[n] + '%';
+  if (n >= 8) { document.getElementById('prog-label').textContent = 'Submitted ✓'; }
+  else { document.getElementById('prog-label').textContent = 'Step ' + (n + 1) + ' of 7'; }
+  cur = n;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function collectFormData(form) {
+  var data = {};
+  var fd = new FormData(form);
+
+  fd.forEach(function(value, key) {
+    if (data[key]) {
+      data[key] = data[key] + "; " + value;
+    } else {
+      data[key] = value;
+    }
+  });
+
+  return data;
+}
+
+function submitForm() {
+  var form = document.getElementById('ckd-xai-survey');
+  var payload = collectFormData(form);
+
+  fetch('https://script.google.com/macros/s/AKfycbzcvuqhqB6pVErEOJ40i5c4TfBOQfgQUQjXyNBqobh24-o4Q4pFXqmS4MxxBK4D6TZz/exec', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    }
+  })
+  .then(function(response) { return response.text(); })
+  .then(function(result) {
+    console.log('Success:', result);
+    goTo(8);
+  })
+  .catch(function(error) {
+    console.error('Error:', error);
+    alert('Submission failed. Please try again.');
+  });
+}
+</script>
+
+</body>
+</html>
