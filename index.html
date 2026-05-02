@@ -370,16 +370,16 @@
 
   <!-- ═══ STEP 6: G3-G5 ═══ -->
   <div class="step" id="s5">
-    <h1>Truthfulness, Utility & Efficiency</h1>
+    <h1>Perceived Truthfulness, Plausibility & Efficiency</h1>
 
     <div class="section-hd">
       <span class="badge bg3">G3 — Truthfulness</span>
-      <span class="sec-title">Credibility of the Explanation</span>
+      <span class="sec-title">Perceived Credibility of the Explanation</span>
     </div>
-    <p class="sec-desc">Does the explanation genuinely reflect the model's reasoning, or does it seem inconsistent with the clinical picture?</p>
+    <p class="sec-desc">This section captures the clinician’s perceived trust that the explanation is consistent with clinically sound factors. It does not technically verify the internal model reasoning.</p>
 
     <div class="q">
-      <p class="q-label">7. After reviewing the explanation, how much do you trust that the model based its decision on clinically sound factors? <span class="req">*</span></p>
+      <p class="q-label">7. After reviewing the explanation, how confident are you that the system relied on clinically sound factors? <span class="req">*</span></p>
       <div class="likert">
         <label class="lo"><input type="radio" name="g3_trust_factors" value="1"><span>No trust (1)</span></label>
         <label class="lo"><input type="radio" name="g3_trust_factors" value="2"><span>(2)</span></label>
@@ -421,7 +421,19 @@
     </div>
 
     <div class="q">
-      <p class="q-label">10. Based on what you saw, what clinical action would you take for this patient? <span class="req">*</span></p>
+      <p class="q-label">10. The explanation is medically plausible and consistent with clinical reasoning. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="2"><span>(2)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="3"><span>(3)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">11. Based on what you saw, what clinical action would you take for this patient? <span class="req">*</span></p>
       <div class="mcq">
         <label class="mo"><input type="radio" name="g4_clinical_action" value="Immediate referral to nephrologist"><span>Immediate referral to a nephrologist</span></label>
         <label class="mo"><input type="radio" name="g4_clinical_action" value="Referral with confirmatory tests"><span>Referral with additional confirmatory tests</span></label>
@@ -439,7 +451,7 @@
     <p class="sec-desc">Is the system fast enough to fit into a busy clinical workflow?</p>
 
     <div class="q">
-      <p class="q-label">11. How long did it take you to enter the data and review the output?</p>
+      <p class="q-label">12. How long did it take you to enter the data and review the output?</p>
       <div class="mcq">
         <label class="mo"><input type="radio" name="g5_time_taken" value="Under 2 minutes"><span>Under 2 minutes</span></label>
         <label class="mo"><input type="radio" name="g5_time_taken" value="2-5 minutes"><span>2 – 5 minutes</span></label>
@@ -449,7 +461,7 @@
     </div>
 
     <div class="q">
-      <p class="q-label">12. Is that time acceptable within your daily clinical routine? <span class="req">*</span></p>
+      <p class="q-label">13. Is that time acceptable within your daily clinical routine? <span class="req">*</span></p>
       <div class="likert">
         <label class="lo"><input type="radio" name="g5_time_acceptable" value="1"><span>Not acceptable (1)</span></label>
         <label class="lo"><input type="radio" name="g5_time_acceptable" value="2"><span>(2)</span></label>
@@ -461,7 +473,7 @@
     </div>
 
     <div class="q">
-      <p class="q-label">13. Did you encounter any technical issues while using the prototype?</p>
+      <p class="q-label">14. Did you encounter any technical issues while using the prototype?</p>
       <div class="mcq">
         <label class="mo"><input type="radio" name="g5_technical_issues" value="No issues"><span>No — everything worked smoothly</span></label>
         <label class="mo"><input type="radio" name="g5_technical_issues" value="Minor issue"><span>Minor issue — easily resolved</span></label>
@@ -487,7 +499,7 @@
     </div>
 
     <div class="q">
-      <p class="q-label">14. What is your overall level of trust in this system for real-world clinical use? <span class="req">*</span></p>
+      <p class="q-label">15. What is your overall level of trust in this system for real-world clinical use? <span class="req">*</span></p>
       <div class="likert">
         <label class="lo"><input type="radio" name="overall_trust" value="1"><span>No trust (1)</span></label>
         <label class="lo"><input type="radio" name="overall_trust" value="2"><span>(2)</span></label>
@@ -499,7 +511,7 @@
     </div>
 
     <div class="q">
-      <p class="q-label">15. Would you recommend deploying this system in clinical settings? <span class="req">*</span></p>
+      <p class="q-label">16. Would you recommend deploying this system in clinical settings? <span class="req">*</span></p>
       <div class="mcq">
         <label class="mo"><input type="radio" name="overall_recommend" value="Yes - ready as is"><span>Yes — ready for deployment as is</span></label>
         <label class="mo"><input type="radio" name="overall_recommend" value="Yes - with improvements"><span>Yes — with improvements to the explanation interface</span></label>
@@ -510,14 +522,14 @@
 
     <div class="q">
       <div class="field">
-        <label>16. What is the single most important improvement you would suggest for this system?</label>
+        <label>17. What is the single most important improvement you would suggest for this system?</label>
         <textarea id="f_improve"  name="q16_improvement" placeholder="Write your suggestion here..."></textarea>
       </div>
     </div>
 
     <div class="q">
       <div class="field">
-        <label>17. Are there any additional clinical variables you would recommend including in the prediction model?</label>
+        <label>18. Are there any additional clinical variables you would recommend including in the prediction model?</label>
         <textarea id="f_features" name="q17_variables" placeholder="Write your suggestion here..."></textarea>
       </div>
     </div>
@@ -626,7 +638,7 @@ function submitForm() {
   var form = document.getElementById('ckd-xai-survey');
   var payload = collectFormData(form);
 
-  fetch('https://script.google.com/macros/s/AKfycbzcvuqhqB6pVErEOJ40i5c4TfBOQfgQUQjXyNBqobh24-o4Q4pFXqmS4MxxBK4D6TZz/exec', {
+  fetch('https://script.google.com/macros/s/AKfycbwjY7ySnueoZJ-AVmI20fJFK6w0tzJVHXlQfNoQ-eNmfCxu-Dm0ZPlt0ogR_oriQ9n-/exec', {
     method: 'POST',
     body: JSON.stringify(payload),
     headers: {
