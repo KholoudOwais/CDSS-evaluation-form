@@ -102,6 +102,15 @@
   .btn-p:hover{background:#0C447C;border-color:#0C447C}
   .page-label{font-size:12px;color:#aaa}
 
+
+  .kdigo-note{background:#F8FAFC;border:1px solid #D7E3F4;border-left:4px solid #185FA5;border-radius:10px;padding:11px 14px;margin:0 0 1rem 0;font-size:12.5px;color:#334155;line-height:1.7}
+  .kdigo-note strong{color:#0C447C}
+
+
+  .error-msg{margin-top:8px;color:#B3261E;font-size:12px;line-height:1.5;background:#FFF4F2;border:1px solid #F2B8B5;border-radius:8px;padding:7px 10px}
+  .invalid select,.invalid input,.invalid textarea{border-color:#B3261E!important}
+  .invalid .lo span,.invalid.mo,.invalid.confirm-row{border-color:#B3261E!important}
+
   .thankyou{text-align:center;padding:2rem 1rem}
   .thankyou .icon{font-size:48px;margin-bottom:1rem}
   .thankyou h2{font-size:22px;font-weight:700;color:#1D9E75;margin-bottom:.75rem}
@@ -178,7 +187,7 @@
     <div class="meta-grid">
       <div class="field">
         <label>Specialty <span class="req">*</span></label>
-        <select id="f_spec" name="specialty">
+        <select id="f_spec" name="specialty" onchange="toggleOtherField('f_spec','specialty_other_box')">
           <option value="">Select...</option>
           <option>Nephrology</option>
           <option>Urology</option>
@@ -191,6 +200,9 @@
           <option>Clinical Pharmacology</option>
           <option>Other</option>
         </select>
+        <div id="specialty_other_box" style="display:none; margin-top:8px;">
+          <input type="text" id="specialty_other" name="specialty_other" placeholder="Please specify your specialty">
+        </div>
       </div>
       <div class="field">
         <label>Years of Experience <span class="req">*</span></label>
@@ -212,15 +224,15 @@
         </select>
       </div>
       <div class="field">
-        <label>Institution (optional)</label>
-        <input type="text" id="f_hosp" name="institution" placeholder="e.g. King Abdulaziz University Hospital">
+        <label>Institution <span style="font-weight:400;color:#aaa;">(optional)</span></label>
+        <input type="text" id="f_hosp" name="institution" placeholder="Enter your institution (optional)">
       </div>
     </div>
 
     <div class="nav">
       <button type="button" class="btn" onclick="goTo(0)">← Back</button>
       <span class="page-label">2 / 7</span>
-      <button type="button" class="btn btn-p" onclick="goTo(2)">Next →</button>
+      <button type="button" class="btn btn-p" onclick="validateAndGo(2)">Next →</button>
     </div>
   </div>
 
@@ -229,14 +241,17 @@
     <h1>Try the Prototype</h1>
     <p class="page-sub">Before answering any questions, please interact with the live system by entering the clinical case below.</p>
 
+    <div class="kdigo-note">
+      <strong>Note:</strong> This prototype demonstrates CKD risk assessment based on current eGFR and ACR values for usability evaluation purposes. In the full system, KDIGO chronicity criteria (≥3 months) will be applied using longitudinal EHR data.
+    </div>
+
     <div class="case-box">
       <h4>Clinical Case — Enter these values into the system</h4>
-      <div class="case-row"><span class="case-key">Age / Sex</span><span class="case-val">58 years, Male</span></div>
+      <div class="case-row"><span class="case-key">Age / Gender</span><span class="case-val">58 years, Male</span></div>
       <div class="case-row"><span class="case-key">eGFR</span><span class="case-val">24 mL/min/1.73m²</span></div>
       <div class="case-row"><span class="case-key">Urine ACR</span><span class="case-val">480 mg/g</span></div>
-      <div class="case-row"><span class="case-key">Diabetes</span><span class="case-val">Yes (12 years duration)</span></div>
-      <div class="case-row"><span class="case-key">Blood Pressure</span><span class="case-val">162/98 mmHg</span></div>
-      <div class="case-row"><span class="case-key">Haemoglobin</span><span class="case-val">9.8 g/dL</span></div>
+      <div class="case-row"><span class="case-key">Urine Albumin</span><span class="case-val">350 mg/L</span></div>
+      <div class="case-row"><span class="case-key">Urine Protein</span><span class="case-val">120 mg/dL</span></div>
       <div class="case-row"><span class="case-key">Expected output</span><span class="case-val"><span class="risk-pill">⚠ Very High Risk</span></span></div>
     </div>
 
@@ -262,184 +277,190 @@
     <div class="nav">
       <button type="button" class="btn" onclick="goTo(1)">← Back</button>
       <span class="page-label">3 / 7</span>
-      <button type="button" class="btn btn-p" id="btn-next2" onclick="goTo(3)" disabled>Next →</button>
+      <button type="button" class="btn btn-p" id="btn-next2" onclick="validateAndGo(3)" disabled>Next →</button>
     </div>
   </div>
 
-  <!-- ═══ STEP 4: G1 ═══ -->
+  <!-- ═══ STEP 4: Clinical XAI Evaluation G1-G2 ═══ -->
   <div class="step" id="s3">
-    <h1>Understandability</h1>
+    <h1>Clinical XAI Evaluation: Understandability & Clinical Relevance</h1>
+    <p class="page-sub">Please rate each statement based on your experience using the prototype.</p>
+
+    <div class="card">
+      <div class="card-title">Rating Scale</div>
+      <div class="card-body">1 = Strongly Disagree, 2 = Disagree, 3 = Neutral, 4 = Agree, 5 = Strongly Agree</div>
+    </div>
 
     <div class="section-hd">
       <span class="badge bg1">G1 — Understandability</span>
       <span class="sec-title">Clarity of System Outputs</span>
     </div>
-    <p class="sec-desc">This section evaluates how easily you could understand the system's outputs without requiring a technical background in AI or machine learning.</p>
+    <p class="sec-desc">This section evaluates whether the risk score and explanation are easy to understand without requiring technical AI knowledge.</p>
 
     <div class="q">
-      <p class="q-label">1. How easy was it to understand the risk score produced by the system? <span class="req">*</span></p>
+      <p class="q-label">1. The risk score generated by the system is easy to understand. <span class="req">*</span></p>
       <div class="likert">
-        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="1"><span>Very difficult (1)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="5"><span>Very easy (5)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_risk_score" value="5"><span>Strongly agree (5)</span></label>
       </div>
-      <div class="scale-lbl"><span>Very difficult</span><span>Very easy</span></div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="q">
-      <p class="q-label">2. How clear were the explainability explanations showing which clinical factors influenced the decision? <span class="req">*</span></p>
+      <p class="q-label">2. The explanations clearly show which clinical factors influenced the prediction. <span class="req">*</span></p>
       <div class="likert">
-        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="1"><span>Not clear (1)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="5"><span>Very clear (5)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g1_clarity_explanations" value="5"><span>Strongly agree (5)</span></label>
       </div>
-      <div class="scale-lbl"><span>Not clear</span><span>Very clear</span></div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="q">
-      <p class="q-label">3. Would you need specialised training to use this system in practice?</p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g1_training_needed" value="No - outputs are self-explanatory for any clinician"><span>No — outputs are self-explanatory for any clinician</span></label>
-        <label class="mo"><input type="radio" name="g1_training_needed" value="Minimal orientation"><span>Minimal orientation (under one hour) would suffice</span></label>
-        <label class="mo"><input type="radio" name="g1_training_needed" value="Structured training required"><span>Structured training would be required</span></label>
-        <label class="mo"><input type="radio" name="g1_training_needed" value="Difficult without technical knowledge"><span>Outputs are difficult to interpret without technical knowledge</span></label>
+      <p class="q-label">3. I can understand the system output without requiring additional training. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g1_training_needed" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g1_training_needed" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g1_training_needed" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g1_training_needed" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g1_training_needed" value="5"><span>Strongly agree (5)</span></label>
       </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-hd">
+      <span class="badge bg2">G2 — Clinical Relevance</span>
+      <span class="sec-title">Usefulness for Clinical Reasoning</span>
+    </div>
+    <p class="sec-desc">This section assesses whether the system output aligns with clinical reasoning and supports decision-making.</p>
+
+    <div class="q">
+      <p class="q-label">4. The factors highlighted by the system align with my clinical reasoning. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g2_factor_alignment" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">5. The explanation supports my clinical decision-making process. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g2_clinical_integration" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g2_clinical_integration" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g2_clinical_integration" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g2_clinical_integration" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g2_clinical_integration" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">6. The system provides sufficient clinical information for decision-making. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g2_sufficient_info" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g2_sufficient_info" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g2_sufficient_info" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g2_sufficient_info" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g2_sufficient_info" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="nav">
       <button type="button" class="btn" onclick="goTo(2)">← Back</button>
       <span class="page-label">4 / 7</span>
-      <button type="button" class="btn btn-p" onclick="goTo(4)">Next →</button>
+      <button type="button" class="btn btn-p" onclick="validateAndGo(4)">Next →</button>
     </div>
   </div>
 
-  <!-- ═══ STEP 5: G2 ═══ -->
+  <!-- ═══ STEP 5: Clinical XAI Evaluation G3-G5 ═══ -->
   <div class="step" id="s4">
-    <h1>Clinical Relevance</h1>
+    <h1>Clinical XAI Evaluation: Credibility, Plausibility & Efficiency</h1>
+    <p class="page-sub">These questions assess perceived truthfulness, clinical plausibility, and workflow fit.</p>
 
     <div class="section-hd">
-      <span class="badge bg2">G2 — Clinical Relevance</span>
-      <span class="sec-title">Alignment with Clinical Reasoning</span>
+      <span class="badge bg3">G3 — Perceived Truthfulness</span>
+      <span class="sec-title">Credibility of the Explanation</span>
     </div>
-    <p class="sec-desc">This section assesses whether the system's explanations align with your clinical reasoning process when evaluating CKD cases.</p>
+    <p class="sec-desc">This section captures clinicians’ perception of whether the explanation is consistent with clinically meaningful reasoning.</p>
 
     <div class="q">
-      <p class="q-label">4. The factors highlighted by the system (eGFR, ACR, diabetes...) — how well do they align with what you consider clinically when assessing CKD risk? <span class="req">*</span></p>
+      <p class="q-label">7. I trust that the system’s predictions are based on clinically meaningful factors. <span class="req">*</span></p>
       <div class="likert">
-        <label class="lo"><input type="radio" name="g2_factor_alignment" value="1"><span>Not at all (1)</span></label>
-        <label class="lo"><input type="radio" name="g2_factor_alignment" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g2_factor_alignment" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g2_factor_alignment" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g2_factor_alignment" value="5"><span>Completely (5)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g3_trust_factors" value="5"><span>Strongly agree (5)</span></label>
       </div>
-      <div class="scale-lbl"><span>Not at all aligned</span><span>Completely aligned</span></div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="q">
-      <p class="q-label">5. Could you directly incorporate the system's explanation into your clinical decision for this case? <span class="req">*</span></p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Yes - directly supports decision"><span>Yes — it directly supports my decision</span></label>
-        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Yes - additional information needed"><span>Yes — but I would need additional information first</span></label>
-        <label class="mo"><input type="radio" name="g2_clinical_integration" value="Partially useful"><span>Partially — only some aspects are useful</span></label>
-        <label class="mo"><input type="radio" name="g2_clinical_integration" value="No direct clinical value"><span>No — I see no direct clinical value in the explanation</span></label>
-      </div>
-    </div>
-
-    <div class="q">
-      <p class="q-label">6. What is the most important information missing from the explanation? <span class="q-sub">(Select all that apply)</span></p>
-      <div class="mcq">
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Rate of eGFR decline over time"><span>Rate of eGFR decline over time (slope)</span></label>
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Current medications and nephrotoxic effects"><span>Current medications and their nephrotoxic effects</span></label>
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Comparison with similar patient profiles"><span>Comparison with similar patient profiles</span></label>
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Suggested treatment or management recommendation"><span>Suggested treatment or management recommendation</span></label>
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Biopsy or imaging findings"><span>Biopsy or imaging findings</span></label>
-        <label class="mo"><input type="checkbox" name="g2_missing_info" value="Nothing - information sufficient"><span>Nothing — the information provided is sufficient</span></label>
-      </div>
-    </div>
-
-    <div class="nav">
-      <button type="button" class="btn" onclick="goTo(3)">← Back</button>
-      <span class="page-label">5 / 7</span>
-      <button type="button" class="btn btn-p" onclick="goTo(5)">Next →</button>
-    </div>
-  </div>
-
-  <!-- ═══ STEP 6: G3-G5 ═══ -->
-  <div class="step" id="s5">
-    <h1>Perceived Truthfulness, Plausibility & Efficiency</h1>
-
-    <div class="section-hd">
-      <span class="badge bg3">G3 — Truthfulness</span>
-      <span class="sec-title">Perceived Credibility of the Explanation</span>
-    </div>
-    <p class="sec-desc">This section captures the clinician’s perceived trust that the explanation is consistent with clinically sound factors. It does not technically verify the internal model reasoning.</p>
-
-    <div class="q">
-      <p class="q-label">7. After reviewing the explanation, how confident are you that the system relied on clinically sound factors? <span class="req">*</span></p>
+      <p class="q-label">8. The explanation is consistent with my clinical judgment. <span class="req">*</span></p>
       <div class="likert">
-        <label class="lo"><input type="radio" name="g3_trust_factors" value="1"><span>No trust (1)</span></label>
-        <label class="lo"><input type="radio" name="g3_trust_factors" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g3_trust_factors" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g3_trust_factors" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g3_trust_factors" value="5"><span>Full trust (5)</span></label>
+        <label class="lo"><input type="radio" name="g3_consistency" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g3_consistency" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g3_consistency" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g3_consistency" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g3_consistency" value="5"><span>Strongly agree (5)</span></label>
       </div>
-      <div class="scale-lbl"><span>No trust</span><span>Full trust</span></div>
-    </div>
-
-    <div class="q">
-      <p class="q-label">8. Did you notice any contradiction between the system's explanation and your own clinical assessment of this case?</p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g3_contradiction" value="No contradiction"><span>No contradiction — the explanation is fully consistent</span></label>
-        <label class="mo"><input type="radio" name="g3_contradiction" value="Minor inconsistency"><span>Minor inconsistency — does not affect my confidence</span></label>
-        <label class="mo"><input type="radio" name="g3_contradiction" value="Noticeable inconsistency"><span>Noticeable inconsistency — I would hesitate to use it</span></label>
-        <label class="mo"><input type="radio" name="g3_contradiction" value="Major contradiction"><span>Major contradiction — significantly reduces my trust</span></label>
-      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="divider"></div>
 
     <div class="section-hd">
       <span class="badge bg4">G4 — Informative Plausibility</span>
-      <span class="sec-title">Detecting Decision Errors</span>
+      <span class="sec-title">Clinical Soundness & Error Awareness</span>
     </div>
-    <p class="sec-desc">Can you use the explanation to identify when the model might be wrong or biased?</p>
+    <p class="sec-desc">This section evaluates whether the explanation appears medically plausible and helps clinicians identify potential issues in the prediction.</p>
 
     <div class="q">
-      <p class="q-label">9. Does the explanation help you identify cases where the model's decision might be incorrect? <span class="req">*</span></p>
-      <div class="likert">
-        <label class="lo"><input type="radio" name="g4_error_detection" value="1"><span>Not at all (1)</span></label>
-        <label class="lo"><input type="radio" name="g4_error_detection" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g4_error_detection" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g4_error_detection" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g4_error_detection" value="5"><span>Very much (5)</span></label>
-      </div>
-      <div class="scale-lbl"><span>Not at all</span><span>Very much</span></div>
-    </div>
-
-    <div class="q">
-      <p class="q-label">10. The explanation is medically plausible and consistent with clinical reasoning. <span class="req">*</span></p>
+      <p class="q-label">9. The explanation is medically plausible. <span class="req">*</span></p>
       <div class="likert">
         <label class="lo"><input type="radio" name="g4_medical_plausibility" value="1"><span>Strongly disagree (1)</span></label>
-        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="4"><span>(4)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g4_medical_plausibility" value="4"><span>Agree (4)</span></label>
         <label class="lo"><input type="radio" name="g4_medical_plausibility" value="5"><span>Strongly agree (5)</span></label>
       </div>
       <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="q">
-      <p class="q-label">11. Based on what you saw, what clinical action would you take for this patient? <span class="req">*</span></p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g4_clinical_action" value="Immediate referral to nephrologist"><span>Immediate referral to a nephrologist</span></label>
-        <label class="mo"><input type="radio" name="g4_clinical_action" value="Referral with confirmatory tests"><span>Referral with additional confirmatory tests</span></label>
-        <label class="mo"><input type="radio" name="g4_clinical_action" value="Manual review first"><span>Manual review first, then decide</span></label>
-        <label class="mo"><input type="radio" name="g4_clinical_action" value="Would not act based on system output"><span>I would not act based on this system's output</span></label>
+      <p class="q-label">10. The explanation helps me identify potential errors in the system’s prediction. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g4_error_detection" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g4_error_detection" value="5"><span>Strongly agree (5)</span></label>
       </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">11. The explanation supports appropriate clinical actions. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g4_clinical_action" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g4_clinical_action" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g4_clinical_action" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g4_clinical_action" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g4_clinical_action" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="divider"></div>
@@ -448,102 +469,109 @@
       <span class="badge bg5">G5 — Computational Efficiency</span>
       <span class="sec-title">Speed & Workflow Fit</span>
     </div>
-    <p class="sec-desc">Is the system fast enough to fit into a busy clinical workflow?</p>
+    <p class="sec-desc">This section assesses whether the system is fast and practical enough for routine clinical use.</p>
 
     <div class="q">
-      <p class="q-label">12. How long did it take you to enter the data and review the output?</p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g5_time_taken" value="Under 2 minutes"><span>Under 2 minutes</span></label>
-        <label class="mo"><input type="radio" name="g5_time_taken" value="2-5 minutes"><span>2 – 5 minutes</span></label>
-        <label class="mo"><input type="radio" name="g5_time_taken" value="5-10 minutes"><span>5 – 10 minutes</span></label>
-        <label class="mo"><input type="radio" name="g5_time_taken" value="More than 10 minutes"><span>More than 10 minutes</span></label>
-      </div>
-    </div>
-
-    <div class="q">
-      <p class="q-label">13. Is that time acceptable within your daily clinical routine? <span class="req">*</span></p>
+      <p class="q-label">12. The system responds quickly. <span class="req">*</span></p>
       <div class="likert">
-        <label class="lo"><input type="radio" name="g5_time_acceptable" value="1"><span>Not acceptable (1)</span></label>
-        <label class="lo"><input type="radio" name="g5_time_acceptable" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="g5_time_acceptable" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="g5_time_acceptable" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="g5_time_acceptable" value="5"><span>Fully acceptable (5)</span></label>
+        <label class="lo"><input type="radio" name="g5_response_speed" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g5_response_speed" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g5_response_speed" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g5_response_speed" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g5_response_speed" value="5"><span>Strongly agree (5)</span></label>
       </div>
-      <div class="scale-lbl"><span>Not acceptable</span><span>Fully acceptable</span></div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
     </div>
 
     <div class="q">
-      <p class="q-label">14. Did you encounter any technical issues while using the prototype?</p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="g5_technical_issues" value="No issues"><span>No — everything worked smoothly</span></label>
-        <label class="mo"><input type="radio" name="g5_technical_issues" value="Minor issue"><span>Minor issue — easily resolved</span></label>
-        <label class="mo"><input type="radio" name="g5_technical_issues" value="Notable issue"><span>Notable issue — affected my experience</span></label>
-        <label class="mo"><input type="radio" name="g5_technical_issues" value="Could not complete"><span>Technical problem — could not complete the task</span></label>
+      <p class="q-label">13. The time required to use the system is acceptable within my clinical workflow. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g5_time_acceptable" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">14. I did not experience technical difficulties while using the system. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="g5_technical_issues" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="g5_technical_issues" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="g5_technical_issues" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="g5_technical_issues" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="g5_technical_issues" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="nav">
+      <button type="button" class="btn" onclick="goTo(3)">← Back</button>
+      <span class="page-label">5 / 7</span>
+      <button type="button" class="btn btn-p" onclick="validateAndGo(5)">Next →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 6: Overall & Open Feedback ═══ -->
+  <div class="step" id="s5">
+    <h1>Overall Assessment & Open Feedback</h1>
+
+    <div class="section-hd">
+      <span class="badge bgx">Overall</span>
+      <span class="sec-title">System Acceptance</span>
+    </div>
+
+    <div class="q">
+      <p class="q-label">15. I trust this system for real-world clinical use. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="overall_trust" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="overall_trust" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="q">
+      <p class="q-label">16. I would recommend deploying this system in clinical practice. <span class="req">*</span></p>
+      <div class="likert">
+        <label class="lo"><input type="radio" name="overall_recommend" value="1"><span>Strongly disagree (1)</span></label>
+        <label class="lo"><input type="radio" name="overall_recommend" value="2"><span>Disagree (2)</span></label>
+        <label class="lo"><input type="radio" name="overall_recommend" value="3"><span>Neutral (3)</span></label>
+        <label class="lo"><input type="radio" name="overall_recommend" value="4"><span>Agree (4)</span></label>
+        <label class="lo"><input type="radio" name="overall_recommend" value="5"><span>Strongly agree (5)</span></label>
+      </div>
+      <div class="scale-lbl"><span>Strongly disagree</span><span>Strongly agree</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="q">
+      <div class="field">
+        <label>17. What is the most important improvement you would suggest for this system?</label>
+        <textarea id="f_improve" name="q16_improvement" placeholder="Write your suggestion here..."></textarea>
+      </div>
+    </div>
+
+    <div class="q">
+      <div class="field">
+        <label>18. Are there any additional clinical variables that should be included in the model?</label>
+        <textarea id="f_features" name="q17_variables" placeholder="Write your suggestion here..."></textarea>
       </div>
     </div>
 
     <div class="nav">
       <button type="button" class="btn" onclick="goTo(4)">← Back</button>
       <span class="page-label">6 / 7</span>
-      <button type="button" class="btn btn-p" onclick="goTo(6)">Next →</button>
-    </div>
-  </div>
-
-  <!-- ═══ STEP 7: Overall ═══ -->
-  <div class="step" id="s6">
-    <h1>Overall Assessment</h1>
-
-    <div class="section-hd">
-      <span class="badge bgx">Overall</span>
-      <span class="sec-title">Your Overall Impression</span>
-    </div>
-
-    <div class="q">
-      <p class="q-label">15. What is your overall level of trust in this system for real-world clinical use? <span class="req">*</span></p>
-      <div class="likert">
-        <label class="lo"><input type="radio" name="overall_trust" value="1"><span>No trust (1)</span></label>
-        <label class="lo"><input type="radio" name="overall_trust" value="2"><span>(2)</span></label>
-        <label class="lo"><input type="radio" name="overall_trust" value="3"><span>(3)</span></label>
-        <label class="lo"><input type="radio" name="overall_trust" value="4"><span>(4)</span></label>
-        <label class="lo"><input type="radio" name="overall_trust" value="5"><span>High trust (5)</span></label>
-      </div>
-      <div class="scale-lbl"><span>No trust</span><span>High trust</span></div>
-    </div>
-
-    <div class="q">
-      <p class="q-label">16. Would you recommend deploying this system in clinical settings? <span class="req">*</span></p>
-      <div class="mcq">
-        <label class="mo"><input type="radio" name="overall_recommend" value="Yes - ready as is"><span>Yes — ready for deployment as is</span></label>
-        <label class="mo"><input type="radio" name="overall_recommend" value="Yes - with improvements"><span>Yes — with improvements to the explanation interface</span></label>
-        <label class="mo"><input type="radio" name="overall_recommend" value="Requires further validation"><span>Requires further validation before deployment</span></label>
-        <label class="mo"><input type="radio" name="overall_recommend" value="No - not ready"><span>No — not ready for clinical deployment</span></label>
-      </div>
-    </div>
-
-    <div class="q">
-      <div class="field">
-        <label>17. What is the single most important improvement you would suggest for this system?</label>
-        <textarea id="f_improve"  name="q16_improvement" placeholder="Write your suggestion here..."></textarea>
-      </div>
-    </div>
-
-    <div class="q">
-      <div class="field">
-        <label>18. Are there any additional clinical variables you would recommend including in the prediction model?</label>
-        <textarea id="f_features" name="q17_variables" placeholder="Write your suggestion here..."></textarea>
-      </div>
-    </div>
-
-
-    <div class="nav">
-      <button type="button" class="btn" onclick="goTo(5)">← Back</button>
-      <span class="page-label">7 / 7</span>
-      <button type="button" class="btn btn-p" onclick="goTo(7)">Next →</button>
+      <button type="button" class="btn btn-p" onclick="validateAndGo(6)">Next →</button>
     </div>
   </div>
 
   <!-- ═══ STEP 7: Stay in touch (optional) ═══ -->
-  <div class="step" id="s7">
+  <div class="step" id="s6">
     <h1>Stay in the Loop <span style="font-size:14px;font-weight:400;color:#888;">(Optional)</span></h1>
     <p class="page-sub">All survey responses are fully anonymous. However, if you would like to receive a summary of the study findings once published, or if you are open to a brief follow-up interview, you are welcome to share your contact details below. This is entirely optional and will not affect your responses in any way.</p>
 
@@ -578,7 +606,7 @@
     <p style="font-size:12px;color:#aaa;margin-top:1rem;line-height:1.6;">You may skip this step entirely — no contact information is required to complete the survey.</p>
 
     <div class="nav">
-      <button type="button" class="btn" onclick="goTo(6)">← Back</button>
+      <button type="button" class="btn" onclick="goTo(5)">← Back</button>
       <span class="page-label">7 / 7</span>
       <button type="button" class="btn btn-p" onclick="submitForm()">Submit Survey ✓</button>
     </div>
@@ -619,6 +647,130 @@ function goTo(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+
+function clearErrors(stepEl) {
+  stepEl.querySelectorAll('.error-msg').forEach(function(e) { e.remove(); });
+  stepEl.querySelectorAll('.invalid').forEach(function(e) { e.classList.remove('invalid'); });
+}
+
+function addError(targetEl, message) {
+  if (!targetEl) return;
+  targetEl.classList.add('invalid');
+  var err = document.createElement('div');
+  err.className = 'error-msg';
+  err.textContent = message;
+  targetEl.appendChild(err);
+}
+
+function toggleOtherField(selectId, boxId) {
+  var select = document.getElementById(selectId);
+  var box = document.getElementById(boxId);
+  if (!select || !box) return;
+
+  var input = box.querySelector('input');
+  if (select.value === 'Other') {
+    box.style.display = 'block';
+    if (input) input.required = true;
+  } else {
+    box.style.display = 'none';
+    if (input) {
+      input.required = false;
+      input.value = '';
+    }
+  }
+}
+
+function validateStep(stepIndex) {
+  var stepEl = document.getElementById('s' + stepIndex);
+  if (!stepEl) return true;
+  clearErrors(stepEl);
+  var valid = true;
+
+  var requiredByStep = {
+    1: [
+      { name: 'specialty', type: 'value', message: 'Please select your specialty.' },
+      { name: 'experience', type: 'value', message: 'Please select your years of experience.' }
+    ],
+    2: [
+      { id: 'proto-done', type: 'singleCheckbox', message: 'Please confirm that you have tried the prototype before continuing.' }
+    ],
+    3: [
+      { name: 'g1_clarity_risk_score', type: 'radio', message: 'Please answer Question 1.' },
+      { name: 'g1_clarity_explanations', type: 'radio', message: 'Please answer Question 2.' },
+      { name: 'g1_training_needed', type: 'radio', message: 'Please answer Question 3.' },
+      { name: 'g2_factor_alignment', type: 'radio', message: 'Please answer Question 4.' },
+      { name: 'g2_clinical_integration', type: 'radio', message: 'Please answer Question 5.' },
+      { name: 'g2_sufficient_info', type: 'radio', message: 'Please answer Question 6.' }
+    ],
+    4: [
+      { name: 'g3_trust_factors', type: 'radio', message: 'Please answer Question 7.' },
+      { name: 'g3_consistency', type: 'radio', message: 'Please answer Question 8.' },
+      { name: 'g4_medical_plausibility', type: 'radio', message: 'Please answer Question 9.' },
+      { name: 'g4_error_detection', type: 'radio', message: 'Please answer Question 10.' },
+      { name: 'g4_clinical_action', type: 'radio', message: 'Please answer Question 11.' },
+      { name: 'g5_response_speed', type: 'radio', message: 'Please answer Question 12.' },
+      { name: 'g5_time_acceptable', type: 'radio', message: 'Please answer Question 13.' },
+      { name: 'g5_technical_issues', type: 'radio', message: 'Please answer Question 14.' }
+    ],
+    5: [
+      { name: 'overall_trust', type: 'radio', message: 'Please answer Question 15.' },
+      { name: 'overall_recommend', type: 'radio', message: 'Please answer Question 16.' }
+    ]
+  };
+
+  var reqs = requiredByStep[stepIndex] || [];
+  reqs.forEach(function(req) {
+    if (req.type === 'radio') {
+      var checked = stepEl.querySelector('input[name="' + req.name + '"]:checked');
+      if (!checked) {
+        var first = stepEl.querySelector('input[name="' + req.name + '"]');
+        addError(first ? first.closest('.q') : stepEl, req.message);
+        valid = false;
+      }
+    } else if (req.type === 'singleCheckbox') {
+      var cb = document.getElementById(req.id);
+      if (!cb || !cb.checked) {
+        addError(cb ? cb.closest('.confirm-row') : stepEl, req.message);
+        valid = false;
+      }
+    } else if (req.type === 'value') {
+      var field = stepEl.querySelector('[name="' + req.name + '"]');
+      if (!field || !String(field.value || '').trim()) {
+        addError(field ? field.closest('.field') : stepEl, req.message);
+        valid = false;
+      }
+    }
+  });
+
+  // If "Other" is selected, require the corresponding text field.
+  [
+    { selectId: 'f_spec', inputId: 'specialty_other', message: 'Please specify your specialty.' }
+  ].forEach(function(item) {
+    var select = document.getElementById(item.selectId);
+    var input = document.getElementById(item.inputId);
+    if (select && input && select.value === 'Other' && !String(input.value || '').trim()) {
+      addError(input.closest('.field'), item.message);
+      valid = false;
+    }
+  });
+
+  if (!valid) {
+    var firstErr = stepEl.querySelector('.error-msg');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+  return valid;
+}
+
+function validateAndGo(n) {
+  if (n > cur && !validateStep(cur)) return;
+  goTo(n);
+}
+
+document.addEventListener('change', function(e) {
+  var stepEl = e.target.closest('.step');
+  if (stepEl) clearErrors(stepEl);
+});
+
 function collectFormData(form) {
   var data = {};
   var fd = new FormData(form);
@@ -630,6 +782,11 @@ function collectFormData(form) {
       data[key] = value;
     }
   });
+
+  // Store the actual typed value when the participant selects "Other".
+  if (data.specialty === 'Other' && data.specialty_other) {
+    data.specialty = data.specialty_other;
+  }
 
   return data;
 }
