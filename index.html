@@ -792,6 +792,13 @@ function collectFormData(form) {
 }
 
 function submitForm() {
+  var submitBtn = document.querySelector('button[onclick="submitForm()"]');
+
+  if (submitBtn.disabled) return; // يمنع الضغط المتكرر
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting...";
+
   var form = document.getElementById('ckd-xai-survey');
   var payload = collectFormData(form);
 
@@ -810,6 +817,8 @@ function submitForm() {
   .catch(function(error) {
     console.error('Error:', error);
     alert('Submission failed. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Submit Survey ✓";
   });
 }
 </script>
